@@ -14,3 +14,7 @@ Here are some ideas to get you started:
 - 😄 Pronouns: ...
 - ⚡ Fun fact: ...
 -->
+
+![Binary Wang's GitHub stats](https://github-readme-stats.vercel.app/api?username=binarywang&count_private=true&show_icons=true&hide=stars)
+
+[![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=Wechat-Group&repo=WxJava)](https://github.com/Wechat-Group/WxJava)
