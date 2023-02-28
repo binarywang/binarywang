@@ -10,10 +10,6 @@
   <img align="center" src="https://github-readme-stats.vercel.app/api/pin/?username=Wechat-Group&repo=WxJava&theme=solarized-light" />
 </a>
 
-<a href="https://github.com/Wechat-Group/WxJava">
-  <img align="center" src="https://github-readme-stats.vercel.app/api/pin/?username=Wechat-Group&repo=WxJava&theme=solarized-light" />
-</a>
-
 
 ### Github
 
