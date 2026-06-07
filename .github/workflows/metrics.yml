@@ -9,7 +9,6 @@ jobs:
 github-metrics:
 runs-on: ubuntu-latest
 
-```
 steps:
   - name: Generate Metrics
     uses: lowlighter/metrics@latest
