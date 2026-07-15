@@ -112,6 +112,25 @@ jobs:
           git config user.name "binary wang"
           git config user.email "a@binarywang.com"
           git add github-metrics.svg
+          SVG_VERSION="$(git hash-object github-metrics.svg)"
+          SVG_VERSION="$SVG_VERSION" python - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          readme = Path("README.md")
+          content = readme.read_text(encoding="utf-8")
+          pattern = r'!\[Metrics\]\(\./github-metrics\.svg(?:\?v=[0-9a-f]{40})?\)'
+          content, count = re.subn(
+              pattern,
+              f'![Metrics](./github-metrics.svg?v={os.environ["SVG_VERSION"]})',
+              content,
+          )
+          if count != 1:
+              raise RuntimeError(f"Expected one Metrics image reference, found {count}")
+          readme.write_text(content, encoding="utf-8")
+          PY
+          git add README.md
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
