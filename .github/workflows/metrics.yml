@@ -20,4 +20,35 @@ jobs:
           template: classic
           base: header, activity, community, repositories
           config_timezone: Asia/Shanghai
+          config_language: zh
+          config_locale: zh-CN
           filename: github-metrics.svg
+
+      - name: Localize svg text fallback
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path("github-metrics.svg")
+          if not p.exists():
+              raise SystemExit("github-metrics.svg not found")
+
+          s = p.read_text(encoding="utf-8")
+
+          mapping = {
+              "Introduction": "简介",
+              "Activity": "活跃度",
+              "Community": "社区",
+              "Repositories": "仓库",
+              "Followers": "关注者",
+              "Stars": "星标",
+              "Pull requests": "拉取请求",
+              "Issues": "议题",
+          }
+
+          for en, zh in mapping.items():
+              s = s.replace(en, zh)
+
+          p.write_text(s, encoding="utf-8")
+          print("Localized github-metrics.svg")
+          PY
