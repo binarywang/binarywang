@@ -12,6 +12,9 @@ jobs:
   github-metrics:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Generate Metrics
         uses: lowlighter/metrics@latest
         with:
@@ -31,10 +34,10 @@ jobs:
 
           p = Path("github-metrics.svg")
           if not p.exists():
-              raise SystemExit("github-metrics.svg not found")
+              print("github-metrics.svg not found, skip fallback localization")
+              raise SystemExit(0)
 
           s = p.read_text(encoding="utf-8")
-
           mapping = {
               "Introduction": "简介",
               "Activity": "活跃度",
@@ -45,7 +48,6 @@ jobs:
               "Pull requests": "拉取请求",
               "Issues": "议题",
           }
-
           for en, zh in mapping.items():
               s = s.replace(en, zh)
 
