@@ -26,15 +26,22 @@ jobs:
           config_language: zh
           config_locale: zh-CN
           filename: github-metrics.svg
+          output_action: none
 
       - name: Localize svg text fallback
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          p = Path("github-metrics.svg")
-          if not p.exists():
-              print("github-metrics.svg not found, skip fallback localization")
+          candidates = [
+              Path("github-metrics.svg"),
+              Path("metrics_renders/github-metrics.svg"),
+              Path("/metrics_renders/github-metrics.svg"),
+          ]
+
+          p = next((x for x in candidates if x.exists()), None)
+          if p is None:
+              print("SVG not found in expected paths, skip fallback localization")
               raise SystemExit(0)
 
           s = p.read_text(encoding="utf-8")
@@ -48,9 +55,32 @@ jobs:
               "Pull requests": "拉取请求",
               "Issues": "议题",
           }
+
+          replaced = 0
           for en, zh in mapping.items():
-              s = s.replace(en, zh)
+              n = s.count(en)
+              if n:
+                  replaced += n
+                  s = s.replace(en, zh)
 
           p.write_text(s, encoding="utf-8")
-          print("Localized github-metrics.svg")
+          print(f"Localized: {p}, replacements: {replaced}")
+
+          # ensure final file path is repository root for commit
+          root_target = Path("github-metrics.svg")
+          if p.resolve() != root_target.resolve():
+              root_target.write_text(s, encoding="utf-8")
+              print("Copied localized SVG to ./github-metrics.svg")
           PY
+
+      - name: Commit and push
+        run: |
+          git config user.name "binary wang"
+          git config user.email "a@binarywang.com"
+          git add github-metrics.svg
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore(metrics): update localized svg"
+            git push
+          fi
