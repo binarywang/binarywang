@@ -99,6 +99,11 @@ jobs:
 
           svg = path.read_text(encoding="utf-8")
           localized = localize_text_nodes(svg)
+          localized = localized.replace(
+              "</style>",
+              "h1{margin-bottom:10px}</style>",
+              1,
+          )
 
           height_match = re.search(r'<svg\b[^>]*\bheight="(\d+)"', localized)
           if height_match is None:
