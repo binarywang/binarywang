@@ -42,9 +42,9 @@ jobs:
               raise FileNotFoundError("Generated SVG was not committed to the workspace")
 
           rules = [
-              (r'\bJoined GitHub\s+(\d+)\s+years?\s+ago\b', r'加入 GitHub \1 年前'),
-              (r'\bJoined GitHub\s+(\d+)\s+months?\s+ago\b', r'加入 GitHub \1 个月前'),
-              (r'\bJoined GitHub\s+(\d+)\s+days?\s+ago\b', r'加入 GitHub \1 天前'),
+              (r'\bJoined GitHub\s+(\d+)\s+years?\s+ago\b', r'已加入 GitHub \1 年'),
+              (r'\bJoined GitHub\s+(\d+)\s+months?\s+ago\b', r'已加入 GitHub \1 个月'),
+              (r'\bJoined GitHub\s+(\d+)\s+days?\s+ago\b', r'已加入 GitHub \1 天'),
               (r'\bFollowed by\s+(\d+)\s+users\b', r'被 \1 位用户关注'),
               (r'\bContributed to\s+(\d+)\s+repositories\b', r'贡献了 \1 个仓库'),
               (r'\b(\d+)\s+Commits\b', r'\1 次提交'),
