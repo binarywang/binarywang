@@ -99,6 +99,17 @@ jobs:
 
           svg = path.read_text(encoding="utf-8")
           localized = localize_text_nodes(svg)
+
+          height_match = re.search(r'<svg\b[^>]*\bheight="(\d+)"', localized)
+          if height_match is None:
+              raise RuntimeError("SVG root height not found")
+          padded_height = int(height_match.group(1)) + 20
+          localized = (
+              localized[:height_match.start(1)]
+              + str(padded_height)
+              + localized[height_match.end(1):]
+          )
+
           path.write_text(localized, encoding="utf-8")
           print(f"Localized text nodes in {path}")
 
