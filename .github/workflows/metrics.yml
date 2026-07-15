@@ -60,6 +60,10 @@ jobs:
               (r'\b(\d+)\s+Repositories?\b', r'\1 个仓库'),
               (r'\b(\d+)\s+Releases?\b', r'\1 个发布版本'),
               (r'\b(\d+)\s+Packages?\b', r'\1 个软件包'),
+              (r'\b(\d+)\s+Stargazers?\b', r'\1 个星标'),
+              (r'\b(\d+)\s+Forkers?\b', r'\1 个分叉'),
+              (r'\b(\d+)\s+Watchers?\b', r'\1 位关注者'),
+              (r'\b(\d+(?:\.\d+)?\s*[kMGT]?B)\s+used\b', r'\1 已使用'),
               (r'\b(\d+)\s+Sponsors?\b', r'\1 位赞助者'),
               (r'\bNo license preference\b', '无许可证偏好'),
               (r'\bCommunity stats\b', '社区统计'),
@@ -76,7 +80,7 @@ jobs:
                   text = svg[position:match.start()]
                   if not in_style:
                       for pattern, replacement in rules:
-                          text = re.sub(pattern, replacement, text)
+                          text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
                   chunks.extend((text, match.group(0)))
 
                   tag = match.group(0)
@@ -89,7 +93,7 @@ jobs:
               text = svg[position:]
               if not in_style:
                   for pattern, replacement in rules:
-                      text = re.sub(pattern, replacement, text)
+                      text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
               chunks.append(text)
               return ''.join(chunks)
 
