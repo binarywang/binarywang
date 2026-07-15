@@ -23,8 +23,6 @@ jobs:
           template: classic
           base: header, activity, community, repositories
           config_timezone: Asia/Shanghai
-          config_language: zh
-          config_locale: zh-CN
           filename: github-metrics.svg
           output_action: none
 
@@ -35,9 +33,8 @@ jobs:
           import re
 
           candidates = [
-              Path("github-metrics.svg"),
-              Path("metrics_renders/github-metrics.svg"),
               Path("/metrics_renders/github-metrics.svg"),
+              Path("metrics_renders/github-metrics.svg"),
           ]
           path = next((candidate for candidate in candidates if candidate.exists()), None)
           if path is None:
