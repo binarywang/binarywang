@@ -57,7 +57,7 @@ jobs:
               (r'\bSponsoring\s+(\d+)\s+repositories\b', r'赞助 \1 个仓库'),
               (r'\bStarred\s+(\d+)\s+repositories\b', r'已加星 \1 个仓库'),
               (r'\bWatching\s+(\d+)\s+repositories\b', r'正在关注 \1 个仓库'),
-              (r'\b(\d+)\s+Repositories?\b', r'\1 个仓库'),
+              (r'\b(\d+)\s+(?:Repository|Repositories)\b', r'\1 个仓库'),
               (r'\b(\d+)\s+Releases?\b', r'\1 个发布版本'),
               (r'\b(\d+)\s+Packages?\b', r'\1 个软件包'),
               (r'\b(\d+)\s+Stargazers?\b', r'\1 个星标'),
