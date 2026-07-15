@@ -28,7 +28,7 @@ jobs:
           filename: github-metrics.svg
           output_action: none
 
-      - name: Localize svg text fallback
+      - name: Localize SVG text nodes
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -39,87 +39,70 @@ jobs:
               Path("metrics_renders/github-metrics.svg"),
               Path("/metrics_renders/github-metrics.svg"),
           ]
-          p = next((x for x in candidates if x.exists()), None)
-          if p is None:
-              print("SVG not found in expected paths, skip fallback localization")
-              raise SystemExit(0)
+          path = next((candidate for candidate in candidates if candidate.exists()), None)
+          if path is None:
+              raise FileNotFoundError("SVG not found in expected paths")
 
-          s = p.read_text(encoding="utf-8")
-
-          # 1) 固定短语替换（按你截图补强）
-          literal_map = {
-              "Joined GitHub": "加入 GitHub",
-              "years ago": "年前",
-              "year ago": "年前",
-              "months ago": "个月前",
-              "month ago": "个月前",
-              "days ago": "天前",
-              "day ago": "天前",
-              "Followed by": "被",
-              "users": "位用户关注",
-              "Contributed to": "贡献了",
-              "repositories": "个仓库",
-              "Repository": "仓库",
-              "Repository reference": "仓库引用",
-              "No license": "无许可证",
-              "No releases": "无发布",
-              "No packages": "无软件包",
-              "used": "已使用",
-              "Stargazers": "星标",
-              "Forkers": "分叉",
-              "Watchers": "关注",
-              "issue comments": "条议题评论",
-              "issues opened": "个议题已开启",
-              "pull requests reviewed": "个拉取请求已审查",
-              "pull requests opened": "个拉取请求已创建",
-              "Sponsors": "赞助",
-              "Watching": "关注",
-              "Following": "正在关注",
-              "Member of": "成员于",
-              "organization": "个组织",
-              "organizations": "个组织",
-              "Active": "活跃",
-              "Community": "社区",
-              "Repositories": "仓库",
-              "Activity": "活跃度",
-              "stars": "星标",
-          }
-
-          replaced_literal = 0
-          for en, zh in literal_map.items():
-              n = s.count(en)
-              if n:
-                  replaced_literal += n
-                  s = s.replace(en, zh)
-
-          # 2) 正则模式替换（动态数字/时间）
-          pattern_rules = [
-              (r'Joined GitHub\s+(\d+)\s+years?\s+ago', r'加入 GitHub \1 年前'),
-              (r'Joined GitHub\s+(\d+)\s+months?\s+ago', r'加入 GitHub \1 个月前'),
-              (r'Joined GitHub\s+(\d+)\s+days?\s+ago', r'加入 GitHub \1 天前'),
-              (r'Followed by\s+(\d+)\s+users', r'被 \1 位用户关注'),
-              (r'Contributed to\s+(\d+)\s+repositories', r'贡献了 \1 个仓库'),
-              (r'(\d+)\s+pull requests reviewed', r'\1 个拉取请求已审查'),
-              (r'(\d+)\s+pull requests opened', r'\1 个拉取请求已创建'),
-              (r'(\d+)\s+issues opened', r'\1 个议题已开启'),
-              (r'(\d+)\s+issue comments', r'\1 条议题评论'),
-              (r'Member of\s+(\d+)\s+organizations?', r'\1 个组织成员'),
-              (r'Following\s+(\d+)\s+users', r'正在关注 \1 位用户'),
-              (r'Watching\s+(\d+)\s+repositories', r'关注 \1 个仓库'),
+          rules = [
+              (r'\bJoined GitHub\s+(\d+)\s+years?\s+ago\b', r'加入 GitHub \1 年前'),
+              (r'\bJoined GitHub\s+(\d+)\s+months?\s+ago\b', r'加入 GitHub \1 个月前'),
+              (r'\bJoined GitHub\s+(\d+)\s+days?\s+ago\b', r'加入 GitHub \1 天前'),
+              (r'\bFollowed by\s+(\d+)\s+users\b', r'被 \1 位用户关注'),
+              (r'\bContributed to\s+(\d+)\s+repositories\b', r'贡献了 \1 个仓库'),
+              (r'\b(\d+)\s+Commits\b', r'\1 次提交'),
+              (r'\b(\d+)\s+pull requests reviewed\b', r'\1 个拉取请求已审查'),
+              (r'\b(\d+)\s+pull requests opened\b', r'\1 个拉取请求已创建'),
+              (r'\b(\d+)\s+issues opened\b', r'\1 个议题已开启'),
+              (r'\b(\d+)\s+issue comments\b', r'\1 条议题评论'),
+              (r'\bMember of\s+(\d+)\s+organizations?\b', r'\1 个组织成员'),
+              (r'\bFollowing\s+(\d+)\s+users\b', r'正在关注 \1 位用户'),
+              (r'\bSponsoring\s+(\d+)\s+repositories\b', r'赞助 \1 个仓库'),
+              (r'\bStarred\s+(\d+)\s+repositories\b', r'已加星 \1 个仓库'),
+              (r'\bWatching\s+(\d+)\s+repositories\b', r'正在关注 \1 个仓库'),
+              (r'\b(\d+)\s+Repositories?\b', r'\1 个仓库'),
+              (r'\b(\d+)\s+Releases?\b', r'\1 个发布版本'),
+              (r'\b(\d+)\s+Packages?\b', r'\1 个软件包'),
+              (r'\b(\d+)\s+Sponsors?\b', r'\1 位赞助者'),
+              (r'\bNo license preference\b', '无许可证偏好'),
+              (r'\bCommunity stats\b', '社区统计'),
+              (r'\bActivity\b', '活跃度'),
+              (r'\bCommunity\b', '社区'),
+              (r'\bRepositories\b', '仓库'),
           ]
 
-          replaced_regex = 0
-          for pat, repl in pattern_rules:
-              s, n = re.subn(pat, repl, s)
-              replaced_regex += n
+          def localize_text_nodes(svg):
+              chunks = []
+              position = 0
+              in_style = False
+              for match in re.finditer(r'<[^>]*>', svg):
+                  text = svg[position:match.start()]
+                  if not in_style:
+                      for pattern, replacement in rules:
+                          text = re.sub(pattern, replacement, text)
+                  chunks.extend((text, match.group(0)))
 
-          p.write_text(s, encoding="utf-8")
-          print(f"Localized: {p}, literal={replaced_literal}, regex={replaced_regex}")
+                  tag = match.group(0)
+                  if re.match(r'<style(?:\s|>)', tag):
+                      in_style = True
+                  elif re.match(r'</style\s*>', tag):
+                      in_style = False
+                  position = match.end()
+
+              text = svg[position:]
+              if not in_style:
+                  for pattern, replacement in rules:
+                      text = re.sub(pattern, replacement, text)
+              chunks.append(text)
+              return ''.join(chunks)
+
+          svg = path.read_text(encoding="utf-8")
+          localized = localize_text_nodes(svg)
+          path.write_text(localized, encoding="utf-8")
+          print(f"Localized text nodes in {path}")
 
           root_target = Path("github-metrics.svg")
-          if p.resolve() != root_target.resolve():
-              root_target.write_text(s, encoding="utf-8")
-              print("Copied localized SVG to ./github-metrics.svg")
+          if path.resolve() != root_target.resolve():
+              root_target.write_text(localized, encoding="utf-8")
           PY
 
       - name: Commit and push
