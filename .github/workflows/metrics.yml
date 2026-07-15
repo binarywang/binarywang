@@ -24,7 +24,12 @@ jobs:
           base: header, activity, community, repositories
           config_timezone: Asia/Shanghai
           filename: github-metrics.svg
-          output_action: none
+          output_action: commit
+          committer_branch: main
+          committer_message: "chore(metrics): update generated svg"
+
+      - name: Refresh generated SVG
+        run: git pull --ff-only
 
       - name: Localize SVG text nodes
         run: |
@@ -32,13 +37,9 @@ jobs:
           from pathlib import Path
           import re
 
-          candidates = [
-              Path("/metrics_renders/github-metrics.svg"),
-              Path("metrics_renders/github-metrics.svg"),
-          ]
-          path = next((candidate for candidate in candidates if candidate.exists()), None)
-          if path is None:
-              raise FileNotFoundError("SVG not found in expected paths")
+          path = Path("github-metrics.svg")
+          if not path.exists():
+              raise FileNotFoundError("Generated SVG was not committed to the workspace")
 
           rules = [
               (r'\bJoined GitHub\s+(\d+)\s+years?\s+ago\b', r'加入 GitHub \1 年前'),
