@@ -6,7 +6,7 @@
 
 <a href="https://trendshift.io/developers/153" target="_blank"><img src="https://trendshift.io/api/badge/developers/153" alt="binarywang | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
-![Metrics](./github-metrics.svg?v=63925b60fa6d3ed566a6b2312c909bfd856fc0aa)
+![Metrics](./github-metrics.svg?v=6a21214bc51bae2e18eedb95214166d736793276)
 
 ![stats](https://github-readme-stats.shion.dev/api?username=binarywang)
 
