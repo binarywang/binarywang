@@ -1,3 +1,8 @@
+### 个人主页 · Personal website
+
+[🌐 访问 binarywang.com · Visit my website](https://binarywang.com/)
+
+探索我的开源项目、个人介绍与联系方式。Explore my projects, learn about me, and get in touch.
 
 ### Github
 [![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fbinarywang&countColor=%23263759&style=flat-square)](https://visitorbadge.io/)
