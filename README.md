@@ -11,7 +11,7 @@
 
 <a href="https://trendshift.io/developers/153" target="_blank"><img src="https://trendshift.io/api/badge/developers/153" alt="binarywang | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
-![Metrics](./github-metrics.svg?v=fabac478608e0c6cb1a11b2dd98bbe8958b4ee85)
+![Metrics](./github-metrics.svg?v=7bd551a0a697418b6cadd7a5af3cc1a1f80a2749)
 
 ![stats](https://github-readme-stats.shion.dev/api?username=binarywang)
 
